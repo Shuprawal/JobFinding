@@ -8,5 +8,9 @@ use Illuminate\Support\Facades\Route;
 //})->middleware('auth:sanctum');
 
 Route::get('/test', function () {
-    return response()->json(['aaa']);
+    return response()->json('aaa');
+});
+
+Route::get('/test2', function () {
+    return response()->json('bbb');
 });
