@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Job;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class JobController extends Controller
@@ -12,7 +14,7 @@ class JobController extends Controller
      */
     public function index()
     {
-        //
+        return User::all();
     }
 
     /**
@@ -20,7 +22,7 @@ class JobController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**

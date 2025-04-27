@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -13,6 +14,10 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        $roleAdmin= Role::where('name', 'Admin')->first();
+        $roleUser= Role::where('name', 'User')->first();
+        $roleEmployee= Role::where('name', 'Employee')->first();
+
         User::create([
             'username' => 'admin',
             'first_name' => 'Admin',
@@ -20,6 +25,7 @@ class UserSeeder extends Seeder
             'phone'=>'0700000000',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('admin12345'),
+            'role_id'=>$roleAdmin->id,
         ]);
 
         User::create([
@@ -29,6 +35,7 @@ class UserSeeder extends Seeder
             'phone'=>'9770000000',
             'email' => 'user@gmail.com',
             'password' => bcrypt('user12345'),
+            'role_id'=>$roleUser->id,
         ]);
 
         User::create([
@@ -38,6 +45,7 @@ class UserSeeder extends Seeder
             'phone'=>'9888000000',
             'email' => 'employee@gmail.com',
             'password' => bcrypt('employee12345'),
+            'role_id'=>$roleEmployee->id,
         ]);
     }
 }

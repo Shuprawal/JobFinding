@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('first_name')->after('username');
             $table->string('last_name')->after('first_name');
             $table->string('phone')->after('last_name');
+            $table->foreignId('role_id')->constrained();
         });
     }
 
