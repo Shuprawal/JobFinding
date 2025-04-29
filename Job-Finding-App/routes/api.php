@@ -38,7 +38,7 @@ Route::put('categories/{category}',[CategoryController::class,'update']);
 
 
 Route::get('jobs',[JobController::class,'index']);
-Route::post('jobs/{job}',[JobController::class,'store']);
+Route::post('jobs/store',[JobController::class,'store']);
 Route::get('jobs/{job}',[JobController::class,'show']);
 Route::put('jobs/{job}',[JobController::class,'update']);
 Route::delete('jobs/{job}',[JobController::class,'destroy']);

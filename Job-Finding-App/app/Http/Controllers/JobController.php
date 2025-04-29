@@ -13,9 +13,21 @@ class JobController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Job::all();
+        $search = $request->input('search');
+
+        $jobs=Job::where('title','LIKE', "%$search%")
+            ->orWhere('description','LIKE', "%$search%")
+            ->orWhere('location','LIKE', "%$search%")
+            ->orWhere('salary','LIKE', "%$search%")
+//            ->whereHas('categories', function ($query) use ($search) {
+//                $query->where('name', 'LIKE', "%$search%");
+//            })
+            ->get();
+        return response()->json(
+            $jobs
+        );
     }
 
     /**

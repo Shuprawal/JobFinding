@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\ApiResponse;
 use App\Http\Requests\CompanyStoreRequest;
 use App\Models\Company;
 use Illuminate\Http\Request;
@@ -14,7 +15,8 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        return Company::all();
+        $company= Company::all();
+        return ApiResponse::success($company, 'List of companies');
     }
 
     /**
@@ -56,10 +58,11 @@ class CompanyController extends Controller
             'description'=>$request->description,
             'website'=>$request->website
         ]);
-        return response()->json([
-            'message'=>'Company updated successfully',
-            'company'=>$company
-        ]);
+//        return response()->json([
+//            'message'=>'Company updated successfully',
+//            'company'=>$company
+//        ]);
+        return ApiResponse::success($company, 'Company updated successfully');
     }
 
     /**

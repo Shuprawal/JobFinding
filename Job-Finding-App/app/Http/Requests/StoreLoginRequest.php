@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreLoginRequest extends FormRequest
@@ -26,4 +27,6 @@ class StoreLoginRequest extends FormRequest
             'password' => ['required'],
         ];
     }
+
+
 }

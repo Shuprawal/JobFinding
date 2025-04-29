@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreLoginRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,14 +11,17 @@ use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
 
-    public function login(Request $request)
+    public function login(StoreLoginRequest $request)
     {
-        $request->validate([
-            'email'=>'required|email',
-            'password'=>'required',
-        ]);
 
-        $credentials = request(['email', 'password']);
+
+        $login='email';
+        if(User::where('username',$request->input('email'))->exists()){
+            $login='username';
+        }
+
+
+        $credentials = ([$login => $request->input('email'), 'password' => $request->input('password')]);
         if (!auth()->attempt($credentials)) {
             return response()->json([
                 'message'=>'Invalid Credentials',
