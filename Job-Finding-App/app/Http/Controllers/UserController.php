@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -9,13 +10,29 @@ use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
 
-    public function signup(Request $request)
+    public function login(Request $request)
     {
         $request->validate([
-            'email'=>'required|email|unique:users,email',
+            'email'=>'required|email',
+            'password'=>'required',
         ]);
+
+        $credentials = request(['email', 'password']);
+        if (!auth()->attempt($credentials)) {
+            return response()->json([
+                'message'=>'Invalid Credentials',
+            ]);
+        }
+        $user = $request->user();
+        $success['token'] =  $user->createToken('MyApp')->plainTextToken;
+        return ['success' => ['token' => $success['token']]];
+
+
+    }
+    public function signup(StoreUserRequest $request)
+    {
+
         $input = $request->all();
-//        return $input;
         $input['password']=bcrypt($input['password']);
         try {
             DB::beginTransaction();

@@ -15,7 +15,7 @@ class JobController extends Controller
      */
     public function index()
     {
-        return User::all();
+        return Job::all();
     }
 
     /**
