@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CompanyStoreRequest;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class CompanyController extends Controller
 {
@@ -18,13 +20,8 @@ class CompanyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CompanyStoreRequest $request)
     {
-        $request->validate([
-           'name' => 'required|string|max:255',
-           'description' => 'required|string|max:255',
-           'website' => 'required|string|max:255',
-        ]);
 
         $company= Company::create([
            'name'=>$request->name,
@@ -44,15 +41,25 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
-        //
+        return response()->json([
+            'company'=>$company
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Company $company)
+    public function update(CompanyStoreRequest $request, Company $company)
     {
-        //
+        $company->update([
+            'name'=> $request->name,
+            'description'=>$request->description,
+            'website'=>$request->website
+        ]);
+        return response()->json([
+            'message'=>'Company updated successfully',
+            'company'=>$company
+        ]);
     }
 
     /**
@@ -60,6 +67,9 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        //
+        $company->delete();
+        return response()->json([
+            'message'=>'Company deleted successfully'
+        ]);
     }
 }
