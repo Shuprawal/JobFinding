@@ -23,12 +23,10 @@ class StoreJobRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-
             'description' => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'company_id' => 'required|integer|exists:companies,id',
             'category_id' => 'required|integer|exists:categories,id',
-
             'salary' => 'required|integer|min:1|max:1000000000',
             'deadline' => 'required|date|after:today',
             'status'=> 'required|string|max:255',

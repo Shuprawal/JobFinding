@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\ApiResponse;
 use App\Http\Requests\StoreJobRequest;
 use App\Models\Category;
 use App\Models\Job;
@@ -18,16 +19,12 @@ class JobController extends Controller
         $search = $request->input('search');
 
         $jobs=Job::where('title','LIKE', "%$search%")
-            ->orWhere('description','LIKE', "%$search%")
-            ->orWhere('location','LIKE', "%$search%")
-            ->orWhere('salary','LIKE', "%$search%")
-//            ->whereHas('categories', function ($query) use ($search) {
-//                $query->where('name', 'LIKE', "%$search%");
-//            })
+//            ->orWhere('description','LIKE', "%$search%")
+//            ->orWhere('location','LIKE', "%$search%")
+//            ->orWhere('salary','LIKE', "%$search%")
             ->get();
-        return response()->json(
-            $jobs
-        );
+
+        return ApiResponse::success($jobs, 'List of jobs');
     }
 
     /**
@@ -48,11 +45,7 @@ class JobController extends Controller
            'category_id'=>$request->category_id,
            'company_id'=>$request->company_id
        ]);
-       return response()->json([
-           'message'=>'Job created successfully',
-           'job'=>$job
-       ]);
-
+       return ApiResponse::success($job, 'Job created successfully');
 
     }
 
@@ -61,9 +54,8 @@ class JobController extends Controller
      */
     public function show(Job $job)
     {
-        return response()->json([
-            'job'=>$job,
-        ]);
+
+        return ApiResponse::setData($job);
     }
 
     /**
@@ -84,10 +76,8 @@ class JobController extends Controller
             'category_id'=>$request->category_id,
             'company_id'=>$request->company_id
         ]);
-        return response()->json([
-            'message'=>'Job created successfully',
-            'job'=>$job
-        ]);
+
+        return ApiResponse::success($job, 'Job updated successfully');
     }
 
     /**
@@ -96,8 +86,6 @@ class JobController extends Controller
     public function destroy(Job $job)
     {
         $job->delete();
-        return response()->json([
-            'message'=>'Job deleted successfully'
-        ]);
+        return ApiResponse::success($job, 'Job deleted successfully');
     }
 }

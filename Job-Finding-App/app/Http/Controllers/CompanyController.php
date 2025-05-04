@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Facades\ApiResponse;
 use App\Http\Requests\CompanyStoreRequest;
 use App\Models\Company;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -24,17 +25,18 @@ class CompanyController extends Controller
      */
     public function store(CompanyStoreRequest $request)
     {
+        try {
+            $company= Company::create([
+                'name'=>$request->name,
+                'description'=>$request->description,
+                'website'=>$request->website
+            ]);
+        }catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 400);
+        }
 
-        $company= Company::create([
-           'name'=>$request->name,
-           'description'=>$request->description,
-            'website'=>$request->website
-        ]);
 
-        return response()->json([
-            'message'=>'Company created successfully',
-            'company'=>$company
-        ]);
+        return ApiResponse::success($company, 'Company created successfully');
 
     }
 
@@ -43,9 +45,7 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
-        return response()->json([
-            'company'=>$company
-        ]);
+        return ApiResponse::setData($company);
     }
 
     /**
@@ -58,10 +58,7 @@ class CompanyController extends Controller
             'description'=>$request->description,
             'website'=>$request->website
         ]);
-//        return response()->json([
-//            'message'=>'Company updated successfully',
-//            'company'=>$company
-//        ]);
+
         return ApiResponse::success($company, 'Company updated successfully');
     }
 
@@ -70,9 +67,13 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        $company->delete();
-        return response()->json([
-            'message'=>'Company deleted successfully'
-        ]);
+        try {
+            $company->delete();
+            return ApiResponse::success($company, 'Company deleted successfully');
+        }catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 400);
+        }
+
+
     }
 }

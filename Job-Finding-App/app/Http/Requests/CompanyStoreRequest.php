@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Company;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CompanyStoreRequest extends FormRequest
 {
@@ -21,10 +23,14 @@ class CompanyStoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        $company= $this->route('company')?->id;
         return [
-            'name' => 'required|string|max:255|unique:companies,name',
+            'name' => ['required','string','max:255',
+                Rule::unique(Company::class)->ignore($company)
+                ],
             'description' => 'required|string|max:255',
             'website' => 'required|string|max:255',
         ];
     }
+
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Services;
 
 use Illuminate\Support\Collection;
 
@@ -22,6 +22,15 @@ class ApiResponse
             'message' => $message,
             'code' => $code,
         ]);
+    }
+    public function setMessage($message){
+        $this->message = $message;
+    }
+    public function setCode($code){
+        $this->code = $code;
+    }
+    public function setData($data){
+        $this->data = $data;
     }
 
 }

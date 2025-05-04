@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\ApiResponse;
 use App\Http\Requests\StoreLoginRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
@@ -13,25 +14,24 @@ class UserController extends Controller
 
     public function login(StoreLoginRequest $request)
     {
-
-
         $login='email';
         if(User::where('username',$request->input('email'))->exists()){
             $login='username';
         }
 
-
         $credentials = ([$login => $request->input('email'), 'password' => $request->input('password')]);
+//        if (!auth()->attempt($credentials)) {
+//            return ApiResponse::error('Invalid Credentials', 401);
+//        }
         if (!auth()->attempt($credentials)) {
-            return response()->json([
-                'message'=>'Invalid Credentials',
-            ]);
+            return ApiResponse::error('Invalid Credentials', 401);
         }
+//       $success=Session()->regenerate();
+        $success= $request->session()->regenerate();
         $user = $request->user();
-        $success['token'] =  $user->createToken('MyApp')->plainTextToken;
-        return ['success' => ['token' => $success['token']]];
+//        $success['token'] =  $user->createToken('MyApp')->plainTextToken;
 
-
+        return ApiResponse::success($success, 'User logged in successfully');
     }
     public function signup(StoreUserRequest $request)
     {
@@ -45,12 +45,11 @@ class UserController extends Controller
             $success['token'] =  $user->createToken('MyApp')->plainTextToken;
 
             DB::commit();
-            return ['success' => ['token' => $success['token']]];
+            return ApiResponse::success($success['token'], 'User created successfully');
         }catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'message'=>$e->getMessage(),
-            ]);
+            return ApiResponse::error($e->getMessage(), 400);
+
 
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\ApiResponse;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -13,7 +14,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return Category::all();
+
+        $category= Category::all();
+        return ApiResponse::success($category, 'List of categories');
     }
 
     /**
@@ -27,10 +30,7 @@ class CategoryController extends Controller
             'name'=>$request->name
         ]);
 
-        return response()->json([
-            'message'=>'Category created successfully',
-            'category'=>$category
-        ]);
+        return ApiResponse::success($category, 'Category created successfully');
 
     }
 
@@ -39,9 +39,10 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        return response()->json([
-            'category'=>$category
-        ]);
+//        return response()->json([
+//            'category'=>$category
+//        ]);
+        return ApiResponse::success($category, 'Category Found');
     }
 
     /**
@@ -53,10 +54,8 @@ class CategoryController extends Controller
         $category->update([
            'name'=>$request->name,
         ]);
-        return response()->json([
-            'message'=>'Category updated successfully',
-            'category'=>$category
-        ]);
+
+        return ApiResponse::success($category, 'Category updated successfully');
     }
 
     /**
@@ -65,8 +64,9 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $category->delete();
-        return response()->json([
-            'message'=>'Category deleted successfully'
-        ]);
+//        return response()->json([
+//            'message'=>'Category deleted successfully'
+//        ]);
+        return ApiResponse::success($category, 'Category deleted successfully');
     }
 }
