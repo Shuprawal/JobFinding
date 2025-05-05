@@ -19,9 +19,7 @@ class JobController extends Controller
         $search = $request->input('search');
 
         $jobs=Job::where('title','LIKE', "%$search%")
-//            ->orWhere('description','LIKE', "%$search%")
-//            ->orWhere('location','LIKE', "%$search%")
-//            ->orWhere('salary','LIKE', "%$search%")
+//
             ->get();
 
         return ApiResponse::success($jobs, 'List of jobs');

@@ -38,11 +38,17 @@ Route::delete('categories/{category}',[CategoryController::class,'destroy']);
 Route::put('/categories/{category}', [CategoryController::class, 'update']);
 
 
+
+
+Route::get('users',[UserController::class,'index']);
+
+
 Route::get('jobs',[JobController::class,'index']);
 Route::post('jobs/store',[JobController::class,'store']);
 Route::get('jobs/{job}',[JobController::class,'show']);
 Route::put('jobs/{job}',[JobController::class,'update']);
 Route::delete('jobs/{job}',[JobController::class,'destroy']);
+Route::post('logout',[UserController::class,'logout']);
 
 Route::middleware('web')->group(function () {
     Route::post('signup',[UserController::class,'signup']);

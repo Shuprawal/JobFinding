@@ -24,6 +24,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\EnsureAPIResult::class,
         ]);
 
+        $middleware->alias([
+            'admin'=>\App\Http\Middleware\EnsureAdminMiddleware::class,
+        ]);
+
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
