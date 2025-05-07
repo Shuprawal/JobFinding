@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\CompanyController;
@@ -50,11 +51,26 @@ Route::put('jobs/{job}',[JobController::class,'update']);
 Route::delete('jobs/{job}',[JobController::class,'destroy']);
 Route::post('logout',[UserController::class,'logout']);
 
-Route::middleware('web')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
+//    Route::get('applications', [ApplicationController::class, 'index']);
+    Route::get('profile', [UserController::class, 'profile']);
+});
+
+Route::get('applications',[ApplicationController::class,'index']);
+Route::get('applications/{application}',[ApplicationController::class,'show']);
+
+//Route::post('applications/store',[ApplicationController::class,'store'])->middleware('auth:web');
+
+//Route::middleware(['web', 'auth:web'])->group(function () {
+    Route::post('applications/store', [ApplicationController::class, 'store']);
+//});
+
+
+
+
     Route::post('signup',[UserController::class,'signup']);
     Route::post('login',[UserController::class,'login']);
 
-});
 
 Route::fallback(function () {
     return response()->json('Not Found', 404);

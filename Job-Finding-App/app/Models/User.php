@@ -52,7 +52,12 @@ class User extends Authenticatable
     }
     public function role()
     {
-       return $this->hasOne(Role::class);
+       return $this->belongsTo(Role::class);
+    }
+
+    public function getRole()
+    {
+        return $this->role->name;
     }
 
 
