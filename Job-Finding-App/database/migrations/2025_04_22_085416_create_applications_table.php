@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('cover_letter');
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
             $table->timestamps();
+
+            $table->unique(['user_id', 'job_id']);
         });
     }
 

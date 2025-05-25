@@ -14,7 +14,6 @@ class CategoryController extends Controller
      */
     public function index()
     {
-
         $category= Category::all();
         return ApiResponse::success($category, 'List of categories');
     }
@@ -24,14 +23,11 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-
-
         $category=Category::create([
             'name'=>$request->name
         ]);
 
         return ApiResponse::success($category, 'Category created successfully');
-
     }
 
     /**
@@ -64,9 +60,6 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $category->delete();
-//        return response()->json([
-//            'message'=>'Category deleted successfully'
-//        ]);
         return ApiResponse::success($category, 'Category deleted successfully');
     }
 }

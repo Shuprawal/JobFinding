@@ -15,16 +15,18 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $aliases = [
             'ApiResponse'=>\App\Facades\ApiResponse::class,
-            VerifyCsrfToken::class
+            VerifyCsrfToken::class,
+
+
         ];
-        $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-            \App\Http\Middleware\EnsureAPIResult::class,
-        ]);
+//        $middleware->web(append: [
+//            \App\Http\Middleware\HandleInertiaRequests::class,
+//            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+//            \App\Http\Middleware\EnsureAPIResult::class,
+//        ]);
         $middleware->api(append: [
             \App\Http\Middleware\EnsureAPIResult::class,
-            \Illuminate\Session\Middleware\StartSession::class,
+//            \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\Cookie\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
@@ -34,6 +36,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'admin'=>\App\Http\Middleware\EnsureAdminMiddleware::class,
+            'admin_or_company'=>\App\Http\Middleware\EnsureAdminOrCompany::class,
+            'company'=>\App\Http\Middleware\EnsureCompany::class,
+            'logged_out'=>\App\Http\Middleware\EnsureLoggedOut::class,
         ]);
 
         //

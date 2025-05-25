@@ -11,11 +11,14 @@ class Job extends Model
     public function category(){
         return $this->hasOne(Category::class);
     }
-    public function user(){
-        return $this->belongsTo(User::class);
-    }
+//    public function user(){
+//        return $this->belongsTo(User::class);
+//    }
     public function applications(){
         return $this->hasMany(Application::class);
+    }
+    public function company(){
+        return $this->belongsTo(Company::class);
     }
 
 }

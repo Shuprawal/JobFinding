@@ -5,9 +5,11 @@ namespace App\Http\Middleware;
 use App\Facades\ApiResponse;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use Laravel\Sanctum\PersonalAccessToken;
 
-class EnsureAdminMiddleware
+class EnsureLoggedOut
 {
     /**
      * Handle an incoming request.
@@ -16,12 +18,10 @@ class EnsureAdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user();
-
-        if (!$user || $user->role?->name !== 'Admin' ){
-            return ApiResponse::error('Unauthorized', Response::HTTP_UNAUTHORIZED);
+        $user = Auth::user();
+        if ($user instanceof \App\Models\User && $user->currentAccessToken()) {
+            return ApiResponse::error('already logged in', Response::HTTP_UNAUTHORIZED);
         }
-
         return $next($request);
     }
 }

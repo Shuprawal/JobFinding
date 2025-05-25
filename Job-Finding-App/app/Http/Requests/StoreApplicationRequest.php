@@ -23,18 +23,16 @@ class StoreApplicationRequest extends FormRequest
     public function rules(): array
     {
         return [
-//            'user_id' => ['required','integer'],
+
             'job_id' => ['required','integer','exists:jobs,id',
 
                 Rule::unique('applications')->where(function ($query) {
-//                    return $query->where('user_id', auth()->id());
                     return $query->where('user_id', auth()->id())->where('job_id', $this->job_id);
                 })
 
             ],
             'resume' => 'required|file|mimes:pdf,doc,docx|max:2048',
             'cover_letter' => 'required|file|mimes:pdf,doc,docx|max:2048',
-//            'status'=> 'required|string|max:255',
         ];
     }
 

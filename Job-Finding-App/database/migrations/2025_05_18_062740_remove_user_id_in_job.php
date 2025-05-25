@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
-
-            $table->unique(['user_id', 'job_id']);
+        Schema::table('jobs', function (Blueprint $table) {
+            $table->dropForeign('jobs_user_id_foreign');
+            $table->dropColumn('user_id');
         });
     }
 
@@ -22,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('applications', function (Blueprint $table) {
-            $table->unique(['user_id', 'job_id']);
+        Schema::table('jobs', function (Blueprint $table) {
+            $table->foreignId('user_id')->constrained('users');
         });
     }
 };

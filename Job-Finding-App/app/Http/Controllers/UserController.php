@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Facades\ApiResponse;
 use App\Http\Requests\StoreLoginRequest;
 use App\Http\Requests\StoreUserRequest;
+use App\Models\Company;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
 {
@@ -41,18 +44,16 @@ class UserController extends Controller
         if (User::where('username', $request->input('email'))->exists()) {
             $login = 'username';
         }
-
         $credentials = [$login => $request->input('email'), 'password' => $request->input('password')];
-
         if (!auth()->attempt($credentials)) {
             return ApiResponse::error('Invalid Credentials', 401);
         }
 
         $user = auth()->user();
         $token = $user->createToken('auth_token')->plainTextToken;
-//        $request->session()->regenerate();
-
-        return ApiResponse::success([], 'User logged in successfully');
+        $data =[$user->role->name ,$token];
+        return ApiResponse::success($data,
+             'User logged in successfully');
     }
     public function signup(StoreUserRequest $request)
     {
@@ -61,8 +62,7 @@ class UserController extends Controller
 
         $user=$request->user();
         if ($user && $user->role === 'Admin'){
-//        if ($request->user()->role->name === 'Admin'){
-            $input['role_id']= Role::where('name', 'employee')->first()->id;
+            $input['role_id']= Role::where('name', 'company')->first()->id;
         }else{
             $input['role_id']= Role::where('name', 'user')->first()->id;
         }
@@ -98,13 +98,39 @@ class UserController extends Controller
     {
 
     }
+//    public function logout(Request $request)
+//    {
+////        auth()->logout();
+//        $user= auth()->user();
+//
+//        if ($user->currentAccessToken()){
+//            $user->currentAccessToken()->delete();
+//        }else{
+//            Auth::logout();
+//        }
+//
+//        return ApiResponse::setMessage('User logged out successfully');
+//    }
+
     public function logout(Request $request)
     {
-//        auth()->logout();
-//        $request->session()->invalidate();
-//        $request->session()->regenerateToken();
-        $request->user()->currentAccessToken()->delete();
-        return ApiResponse::setMessage('User logged out successfully');
+        $user = Auth::user();
+        if (!$user) {
+            return ApiResponse::error('not logged in', 401);
+        }
+        $token = $user->currentAccessToken();
+
+        if ($token instanceof PersonalAccessToken) {
+            $token->delete();
+
+            return response()->json([
+                'message' => 'Logged out successfully'
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Session user logged out successfully.'
+        ]);
     }
 
     /**
