@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Facades\ApiResponse;
 use App\Http\Requests\JobFilterRequest;
 use App\Http\Requests\StoreJobRequest;
+use App\Models\Application;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\Job;
@@ -93,7 +94,7 @@ class JobController extends Controller
     public function show(Job $job)
     {
 
-        return ApiResponse::setData($job);
+        return ApiResponse::success(['job'=>$job], 'Job Found');
     }
 
     /**
@@ -166,5 +167,21 @@ class JobController extends Controller
         ]);
         return ApiResponse::success($job, 'Job status changed successfully');
 
+    }
+    public function selectedApplications(Job $job )
+    {
+        $this->authorize('viewSelection', $job);
+        $applications=Application::with('user')->where('job_id',$job->id)
+            ->where('status','accepted')->get();
+        return ApiResponse::success($applications);
+    }
+
+    public function unselectedApplications(Job $job)
+    {
+        $this->authorize('viewSelection', $job);
+
+        $applications=Application::with('user')->where('job_id',$job->id)
+            ->where('status','rejected')->get();
+        return ApiResponse::success($applications);
     }
 }

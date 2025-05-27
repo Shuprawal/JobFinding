@@ -3,24 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Facades\ApiResponse;
+use App\Http\Requests\ApplicationFilterRequest;
+use App\Http\Requests\ApplicationStatusChange;
 use App\Http\Requests\StoreApplicationRequest;
 use App\Models\Application;
+use App\Models\Job;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+
 class ApplicationController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(ApplicationFilterRequest $request)
     {
 
+//        $this->authorize('viewAny', Application::class);
+
         $jobId = $request->input('jobId');
-        $applications = Application::when($jobId, function ($query) use ($jobId) {
-            return $query->where('job_id', $jobId);
-        })->get();
+
+        $applications = Application::with('job', 'user')
+            ->when($jobId, fn ($query) => $query->where('job_id', $jobId))
+            ->latest()
+            ->paginate(10);
         return ApiResponse::success($applications, 'List of applications');
     }
 
@@ -29,6 +39,8 @@ class ApplicationController extends Controller
      */
     public function store(StoreApplicationRequest $request)
     {
+//        $this->authorize('create', Application::class);
+        $this->authorize('create', [Application::class, $request->job_id]);
         $user=Auth::user();
         try {
             DB::beginTransaction();
@@ -57,14 +69,9 @@ class ApplicationController extends Controller
      */
     public function show(Application $application)
     {
-        $user=auth()->user();
-        if (!$user) {
-            return ApiResponse::error('Unauthenticated', 401);
-        }
-        if ($user->getRole() === 'User') {
-            return ApiResponse::success('logged in user');
-        }
-            return ApiResponse::success($user,'not logged in user');
+        $this->authorize('view', $application);
+
+        return ApiResponse::success($application, 'Application Found');
 
     }
 
@@ -73,14 +80,55 @@ class ApplicationController extends Controller
      */
     public function update(Request $request, Application $application)
     {
-        //
+        $this->authorize('update', $application);
+
+        try {
+            DB::beginTransaction();
+
+            if ($request->hasFile('resume')) {
+                $resumePath = $request->file('resume')->store('application/resumes', 'public');
+                $application->resume = $resumePath;
+            }
+
+            if ($request->hasFile('cover_letter')) {
+                $coverLetterPath = $request->file('cover_letter')->store('application/cover_letters', 'public');
+                $application->cover_letter = $coverLetterPath;
+            }
+
+            if ($request->filled('status')) {
+                $application->status = $request->status;
+            }
+
+            $application->save();
+            DB::commit();
+
+            return ApiResponse::success($application, 'Application updated successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponse::error($e->getMessage(), 'Failed to update application', 500);
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Application $application)
     {
-        //
+        $this->authorize('delete', $application);
+        $application->delete();
+        return ApiResponse::success($application, 'Application deleted successfully');
     }
+
+    public function changeStatus(Application $application , ApplicationStatusChange $request)
+    {
+        $this->authorize('toggle', $application);
+        $application->update([
+            'status'=>$request->status,
+        ]);
+
+        return ApiResponse::success($application, 'Application status changed successfully');
+    }
+
+
 }

@@ -61,7 +61,7 @@ class UserController extends Controller
         $input = $request->all();
 
         $user=$request->user();
-        if ($user && $user->role === 'Admin'){
+        if ($user && $user->role?->name === 'Admin'){
             $input['role_id']= Role::where('name', 'company')->first()->id;
         }else{
             $input['role_id']= Role::where('name', 'user')->first()->id;
@@ -146,11 +146,6 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function storeEmployee(Request $request)
-    {
-
-
-    }
 
     /**
      * Display the specified resource.

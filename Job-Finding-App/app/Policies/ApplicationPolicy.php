@@ -15,6 +15,7 @@ class ApplicationPolicy
     public function viewAny(User $user): bool
     {
         return $user->role?->name === 'Admin';
+//        return true;
     }
 
     /**
@@ -32,7 +33,7 @@ class ApplicationPolicy
     public function create(User $user, Application $application): bool
     {
 
-        return $user->role?->name === 'User';
+        return $user->role?->name === 'User' && $application->job->deadline > now() ;
 
     }
 
@@ -73,5 +74,10 @@ class ApplicationPolicy
     public function isOwner(User $user, Application $application)
     {
         return $application->job->company->user->id === $user->id || $application->user_id === $user->id || $user->role?->name === 'admin';
+    }
+
+    public function toggle(User $user, Application $application)
+    {
+        return  $application->job->company->user->id === $user->id;
     }
 }

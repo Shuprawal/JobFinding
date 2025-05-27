@@ -52,6 +52,7 @@ class AuthServiceProvider extends ServiceProvider
         Job::class => JobPolicy::class,
         Company::class => CompanyPolicy::class,
         Application::class => ApplicationPolicy::class
+
     ];
 
     /**

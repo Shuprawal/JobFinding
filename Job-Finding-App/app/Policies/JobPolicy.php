@@ -76,4 +76,10 @@ class JobPolicy
 //        return $user->id === $job->company->user_id ? Response::allow() : Response::deny('You are not authorized to perform this action.');
 
     }
+
+
+    public function viewSelection(User $user, Job $job)
+    {
+        return $user->getRole() === 'Admin' || $job->company->user->id === $user->id;
+    }
 }
