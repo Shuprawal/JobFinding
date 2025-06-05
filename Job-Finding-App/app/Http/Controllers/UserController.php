@@ -17,6 +17,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 class UserController extends Controller
 {
 
+
 //    public function login(StoreLoginRequest $request)
 //    {
 //        $login='email';
@@ -60,12 +61,9 @@ class UserController extends Controller
 
         $input = $request->all();
 
-        $user=$request->user();
-        if ($user && $user->role?->name === 'Admin'){
-            $input['role_id']= Role::where('name', 'company')->first()->id;
-        }else{
-            $input['role_id']= Role::where('name', 'user')->first()->id;
-        }
+
+        $input['role_id']= Role::where('name', 'user')->first()->id;
+
 
         $input['password']=bcrypt($input['password']);
 
@@ -76,6 +74,7 @@ class UserController extends Controller
             $user= User::create($input);
             $success['token'] =  $user->createToken('MyApp')->plainTextToken;
 
+//            $user->sendEmailVerificationNotification();
             Auth::login($user);
 //            $success=$request->session()->regenerate();
 
@@ -97,20 +96,10 @@ class UserController extends Controller
     public function profile()
     {
 
+        $user = auth()->user();
+        return ApiResponse::success($user, 'User profile');
     }
-//    public function logout(Request $request)
-//    {
-////        auth()->logout();
-//        $user= auth()->user();
-//
-//        if ($user->currentAccessToken()){
-//            $user->currentAccessToken()->delete();
-//        }else{
-//            Auth::logout();
-//        }
-//
-//        return ApiResponse::setMessage('User logged out successfully');
-//    }
+
 
     public function logout(Request $request)
     {
@@ -155,18 +144,25 @@ class UserController extends Controller
         return ApiResponse::success($user);
     }
 
+    public function notifications()
+    {
+        $user = auth()->user();
+        return ApiResponse::success($user->notifications, 'List of notifications');
+    }
+
+
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
-    {
-        try {
-
-
-        }catch (\Exception $e) {
-            return ApiResponse::error($e->getMessage(), 400);
-        }
-    }
+//    public function update(Request $request, User $user)
+//    {
+//        try {
+//
+//
+//        }catch (\Exception $e) {
+//            return ApiResponse::error($e->getMessage(), 400);
+//        }
+//    }
 
     /**
      * Remove the specified resource from storage.
